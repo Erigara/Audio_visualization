@@ -6,6 +6,7 @@ Created on Thu Jan 17 20:26:50 2019
 """
 import numpy as np
 import sys
+
 class FileParser:
     """
     Класс FileParser - генератор, 
@@ -21,6 +22,7 @@ class FileParser:
         self.filename = filename
         self.separators = separators
         self.separators.append("")
+        self.separators.append("/n")
     def __iter__(self):
         """
         Переоткрывает файл и создает генератор по его значениям.
@@ -58,6 +60,7 @@ class CommandLineParser:
         """
         self.separators = separators
         self.separators.append("")
+        self.separators.append("\n")
     def __iter__(self):
         """
         Переоткрывает файл и создает генератор по его значениям.
@@ -69,12 +72,13 @@ class CommandLineParser:
             while not char in self.separators:
                 value.append(char)
                 char = file.read(1)
-            if char == '':
+            if char == '' or  char == '\n':
                 current_state = states["EndOfFile"]
+                file.seek(0)
             result =  "".join(value)
             return result, current_state
+        #print("here 1")
         file = sys.stdin
-        file.seek(0)
         current_state = states["IsGoing"]
         new_value, current_state = getNextValue(current_state)
         while current_state == states["IsGoing"]:
@@ -116,7 +120,6 @@ class WaveData():
                    return (x, y), state
                else: 
                    return None, state
-               
          seq = iter(self.parser)
          current_window = []
          current_state = states["IsGoing"]

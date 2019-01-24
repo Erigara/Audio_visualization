@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
 import ReadDataScript as rds
+import sys
 
 class TwoChanelsMovingPlot:
     """
@@ -36,6 +37,14 @@ class TwoChanelsMovingPlot:
        self.r_ax.set_ylim(-1, 1)
        self.r_ax.grid(True)
        
+    def init(self):
+        def start_init(ax, line):
+             ax.set_xlim(0, 1)
+             ax.figure.canvas.draw()
+             line.set_data([], [])
+             return line
+        return start_init(self.l_ax, self.l_line), start_init(self.r_ax, self.r_line)  
+    
     def __call__(self, plot_data):
         """
         Обновляет данные графика для нового кадра.
@@ -85,7 +94,13 @@ class MovingPlot:
        self.ax = ax
        self.ax.set_ylim(-1, 1)
        self.ax.grid(True)
-
+       
+     def init(self):
+        self.ax.set_xlim(0, 1)
+        self.ax.figure.canvas.draw()
+        self.line.set_data([], [])
+        return self.line,
+    
      def __call__(self, plot_data):
         """
         Обновляет данные графика для нового кадра.
@@ -103,16 +118,16 @@ class MovingPlot:
             self.line.set_data(x, y)
         return self.line, 
     
-    
 if __name__ == "__main__":
     parser = rds.CommandLineParser()
-    wave_data = rds.WaveData(parser, 200, 20)
+    wave_data = rds.WaveData(parser, 1684, 842)
     fig, (ax_l, ax_r) = plt.subplots(1,2)
     #mv = MovingWave(ax1, wave_data)
     tmv = TwoChanelsMovingPlot(ax_l, ax_r, wave_data)
-    anim = FuncAnimation(fig, tmv, frames = tmv.wave_data,
-                         interval=1, blit=True, repeat= False)
+    anim = FuncAnimation(fig, tmv, frames = tmv.wave_data, init_func = tmv.init,
+                         interval=10, blit=True, repeat= True)
     #Writer = animation.writers["ffmpeg"]
     #writer = Writer(fps=15, bitrate= 1080)
     #anim.save("two_chanels.mp4", writer)
     plt.show()
+    sys.exit(0);
