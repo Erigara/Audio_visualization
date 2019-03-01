@@ -6,7 +6,7 @@ pip install matplotlib
 pip install numpy
 ```
 ## Example
-Also repositorie have example of usage to visuilzed data parsed from .wav file.
+Also repositorie has example of usage to visuilzed data parsed from .wav file.
 In that case it should be used with: https://github.com/Arjentix/Wav-Visualizer.
 
 Instalation and usage described on the link above.
